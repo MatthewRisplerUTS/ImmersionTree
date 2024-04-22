@@ -21,13 +21,11 @@ struct ContentView: View {
         })
         .padding(50)
         .glassBackgroundEffect()
-        .onAppear(perform: {
-            Task {
-                await openImmersiveSpace(id: "ImmersiveSpace")
-            }
-        })
+        
         Button("Spawn Tree") {
-            
+            Task {
+                                await openImmersiveSpace(id: "ImmersiveSpace")
+                            }
         }
     }
 }
