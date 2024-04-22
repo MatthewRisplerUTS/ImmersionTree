@@ -1,17 +1,23 @@
-
 import SwiftUI
 import RealityKit
 import RealityKitContent
+import Charts
+
+struct HeartRate: Identifiable {
+    let id = UUID()
+    let time: Int
+    let rate: Double
+}
 
 struct ImmersiveView: View {
-    // Initial scale of the model
-    @State private var modelScale: CGFloat = 0.001
-    // Target scale value for the model to grow to
-    private let targetScale: CGFloat = 0.5
-    // Controls whether the tree is growing or not
-    @State private var isGrowing = false
-    // State to hold the tree entity
+    @State private var modelScale: CGFloat = 0.0002
+    private let targetScale: CGFloat = 0.008
+    private let initialScale: CGFloat = 0.0002
+    private let growthThreshold: Double = 80
+    private let growthIncrement: CGFloat = 0.0001  // Increment the scale by this amount
     @State private var treeEntity: Entity? = nil
+    @State private var hrVals = [HeartRate(time: 0, rate: 120.786)]
+    @State private var count: Int = 1
 
     var body: some View {
         VStack {
@@ -27,32 +33,60 @@ struct ImmersiveView: View {
             }
             .frame(height: 300)
 
-            // Button to toggle the growth of the tree
-            Button("Grow") {
-                print("Grow button pressed. Current scale: \(modelScale), isGrowing: \(isGrowing)")
-                guard modelScale < targetScale else {
-                    print("Model scale \(modelScale) is already at or beyond target \(targetScale)")
-                    return
-                }
-                isGrowing.toggle()
-                print("Toggled isGrowing to \(isGrowing)")
-
-                if isGrowing {
-                    withAnimation(.easeInOut(duration: 2)) {
-                        modelScale = targetScale
-                        updateTreeScale(to: modelScale)
+            GroupBox("Heart Rate Monitor:") {
+                Chart {
+                    ForEach(hrVals) { HeartRate in
+                        LineMark(x: .value("Time", HeartRate.time), y: .value("Heart Rate", HeartRate.rate))
                     }
-                } else {
-                    modelScale = 0.15
-                    isGrowing = false
-                    updateTreeScale(to: modelScale)
-                    print("Reset modelScale to 0.15 and set isGrowing to false")
                 }
+                .chartXScale(domain: count > 20 ? [count-20, count] : [0, 20])
+                .foregroundStyle(.red)
+            }
+
+            Button("Update Heart Rate") {
+                updateHeartRate()
             }
             .padding()
             .background(Color.blue)
             .foregroundColor(.white)
             .cornerRadius(10)
+
+            Text("Current heart rate: \(hrVals.last?.rate ?? 0, specifier: "%.2f") BPM")
+        }
+    }
+
+    private func updateHeartRate() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            let newRate = Double.random(in: 60...120)
+            hrVals.append(HeartRate(time: count, rate: newRate))
+            if hrVals.count > 20 {
+                hrVals.removeFirst()
+            }
+            count += 1
+
+            // Check if the current heart rate allows for tree growth or needs scale resetting
+            if let currentRate = hrVals.last?.rate {
+                if currentRate < growthThreshold {
+                    incrementTreeGrowth()
+                } else {
+                    resetTreeScale()
+                }
+            }
+        }
+    }
+
+    private func incrementTreeGrowth() {
+        let newScale = min(modelScale + growthIncrement, targetScale)
+        if modelScale != newScale {
+            modelScale = newScale
+            updateTreeScale(to: modelScale)
+        }
+    }
+    
+    private func resetTreeScale() {
+        withAnimation(.easeInOut(duration: 2)) {
+            modelScale = initialScale
+            updateTreeScale(to: modelScale)
         }
     }
     
@@ -60,7 +94,6 @@ struct ImmersiveView: View {
         if let tree = treeEntity {
             let scaleVector = SIMD3<Float>(repeating: Float(scale))
             tree.move(to: Transform(scale: scaleVector), relativeTo: tree.parent, duration: 2, timingFunction: .easeInOut)
-            print("Animating tree scale to \(scale)")
         }
     }
 }
@@ -69,3 +102,5 @@ struct ImmersiveView: View {
     ImmersiveView()
         .previewLayout(.sizeThatFits)
 }
+
+
