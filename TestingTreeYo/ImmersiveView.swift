@@ -23,10 +23,17 @@ struct ImmersiveView: View {
         VStack {
             RealityView { content in
                 do {
+                    guard let skyBoxEntity = createSkyBox() else{
+                                    print("Error")
+                                    return
+                                }
+                                
+                                content.add(skyBoxEntity)
                     let tree = try await Entity(named: "Old_Tree", in: realityKitContentBundle)
                     treeEntity = tree
                     treeEntity?.scale = SIMD3<Float>(repeating: Float(modelScale))
                     content.add(tree)
+                    
                 } catch {
                     print("Error loading the tree model: \(error)")
                 }
@@ -74,6 +81,28 @@ struct ImmersiveView: View {
             }
         }
     }
+    
+    private func createSkyBox() -> Entity? {
+            let largeSphere = MeshResource.generateSphere(radius: 1000)
+            
+            var skyBoxMaterial = UnlitMaterial()
+            
+            
+            do{
+                let texture = try  TextureResource.load(named: "mossy_forest")
+                skyBoxMaterial.color = .init(texture: .init(texture))
+            } catch{
+                print("error")
+            }
+            
+            let skyBoxEntity = Entity()
+            skyBoxEntity.components.set(ModelComponent(mesh: largeSphere, materials: [skyBoxMaterial]))
+            
+            skyBoxEntity.scale *= .init(x:-1, y: 1, z: 1)
+            
+            return skyBoxEntity
+            
+        }
 
     private func incrementTreeGrowth() {
         let newScale = min(modelScale + growthIncrement, targetScale)

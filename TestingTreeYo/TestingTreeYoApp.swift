@@ -4,6 +4,7 @@ import SwiftUI
 struct TestingTreeYoApp: App {
     
     @State private var viewModel = ViewModel()
+    @State var immersionMode:ImmersionStyle = .progressive
     
     var body: some Scene {
         WindowGroup {
@@ -14,6 +15,7 @@ struct TestingTreeYoApp: App {
         ImmersiveSpace(id: "ImmersiveSpace") {
             ImmersiveView()
         }
+        .immersionStyle(selection: $immersionMode, in: .progressive)
     }
 }
 
