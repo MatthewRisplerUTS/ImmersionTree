@@ -1,11 +1,17 @@
 import SwiftUI
+import Firebase
 
 @main
 struct TestingTreeYoApp: App {
     
     @State private var viewModel = ViewModel()
-    @State var immersionMode:ImmersionStyle = .progressive
-    
+    @State var immersionMode: ImmersionStyle = .progressive
+
+    // Add an initializer to configure Firebase
+    init() {
+        FirebaseApp.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -18,4 +24,5 @@ struct TestingTreeYoApp: App {
         .immersionStyle(selection: $immersionMode, in: .progressive)
     }
 }
+
 
