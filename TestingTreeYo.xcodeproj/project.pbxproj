@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3418F1B12BFDA76300E52C87 /* growing_tree_no_branch_ani.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3418F1B02BFDA76200E52C87 /* growing_tree_no_branch_ani.usdz */; };
+		3418F1C82C0358A200E52C87 /* Working_Tree.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3418F1C72C0358A200E52C87 /* Working_Tree.usdz */; };
+		3418F1CA2C03594100E52C87 /* Old_Tree.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 3418F1C92C03594100E52C87 /* Old_Tree.usdz */; };
 		345CA9862BE0B28600ABA6C9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 345CA9852BE0B28600ABA6C9 /* GoogleService-Info.plist */; };
 		345CA9C02BE0BFDA00ABA6C9 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 345CA9BF2BE0BFDA00ABA6C9 /* FirebaseAnalytics */; };
 		345CA9C22BE0BFDA00ABA6C9 /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = 345CA9C12BE0BFDA00ABA6C9 /* FirebaseAnalyticsOnDeviceConversion */; };
@@ -25,7 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3418F1B02BFDA76200E52C87 /* growing_tree_no_branch_ani.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; name = growing_tree_no_branch_ani.usdz; path = "../../../Downloads/GenerativeDoodleArt_VisionOS-main/Packages/RealityKitContent/Sources/RealityKitContent/RealityKitContent.rkassets/growing_tree_no_branch_ani.usdz"; sourceTree = "<group>"; };
+		3418F1C72C0358A200E52C87 /* Working_Tree.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = Working_Tree.usdz; sourceTree = "<group>"; };
+		3418F1C92C03594100E52C87 /* Old_Tree.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = Old_Tree.usdz; sourceTree = "<group>"; };
 		345CA9852BE0B28600ABA6C9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		347AF0C12BC56272004BFF42 /* TestingTreeYo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestingTreeYo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		347AF0C82BC56272004BFF42 /* TestingTreeYoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestingTreeYoApp.swift; sourceTree = "<group>"; };
@@ -74,7 +76,8 @@
 		347AF0C32BC56272004BFF42 /* TestingTreeYo */ = {
 			isa = PBXGroup;
 			children = (
-				3418F1B02BFDA76200E52C87 /* growing_tree_no_branch_ani.usdz */,
+				3418F1C92C03594100E52C87 /* Old_Tree.usdz */,
+				3418F1C72C0358A200E52C87 /* Working_Tree.usdz */,
 				347AF0C82BC56272004BFF42 /* TestingTreeYoApp.swift */,
 				347AF0CA2BC56272004BFF42 /* ContentView.swift */,
 				34B53D2F2BD6330500F7CCD5 /* ViewModel.swift */,
@@ -167,9 +170,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				347AF0D22BC56275004BFF42 /* Preview Assets.xcassets in Resources */,
+				3418F1C82C0358A200E52C87 /* Working_Tree.usdz in Resources */,
 				347AF0CF2BC56275004BFF42 /* Assets.xcassets in Resources */,
 				345CA9862BE0B28600ABA6C9 /* GoogleService-Info.plist in Resources */,
-				3418F1B12BFDA76300E52C87 /* growing_tree_no_branch_ani.usdz in Resources */,
+				3418F1CA2C03594100E52C87 /* Old_Tree.usdz in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -22,6 +22,7 @@ struct TestingTreeYoApp: App {
             ImmersiveView()
         }
         .immersionStyle(selection: $immersionMode, in: .progressive)
+        .defaultSize(CGSize(width: 1200, height: 450))
     }
 }
 
