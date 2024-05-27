@@ -4,22 +4,24 @@ import RealityKitContent
 import Charts
 import Firebase
 
+// Structure to hold heart rate data
 struct HeartRate: Identifiable {
     let id = UUID()
     let time: Int
     let rate: Double
 }
 
+// Main view structure
 struct ImmersiveView: View {
     @State private var modelScale: CGFloat = 1
     private let targetScale: CGFloat = 9
     private let initialScale: CGFloat = 0.5
-    private let growthThreshold: CGFloat = 80 // Heart rate threshold for stopping animation
+    private let growthThreshold: CGFloat = 80
     private let growthIncrement: CGFloat = 0.01
-    private let shrinkIncrement: CGFloat = 0.005 // Slower shrink increment
+    private let shrinkIncrement: CGFloat = 0.005
     @State private var treeEntity: Entity? = nil
     @State private var playbackController: AnimationPlaybackController? = nil
-    private let animationSpeed: Float = 0.05 // Speed factor for slowing down the animation
+    private let animationSpeed: Float = 0.05
     @State private var hrVals = [HeartRate]()
     @State private var count: Int = 0
     @State private var timer: Timer?
@@ -29,6 +31,7 @@ struct ImmersiveView: View {
 
     var body: some View {
         VStack {
+            // TreeView to display the animated tree model
             TreeView(modelScale: $modelScale, treeEntity: $treeEntity, playbackController: $playbackController, animationSpeed: animationSpeed)
                 .edgesIgnoringSafeArea(.all)
                 .onAppear {
@@ -38,6 +41,7 @@ struct ImmersiveView: View {
                     stopTimer()
                 }
 
+            // Heart rate monitor chart
             GroupBox("Heart Rate Monitor:") {
                 Chart {
                     ForEach(hrVals) { heartRate in
@@ -48,10 +52,12 @@ struct ImmersiveView: View {
                 .foregroundStyle(.red)
             }
 
+            // Display current heart rate
             Text("Current heart rate: \(hrVals.last?.rate ?? 0, specifier: "%.2f") BPM")
         }
     }
 
+    // Function to find the latest session key from Firebase
     private func findLatestSession() {
         let ref = Database.database().reference(withPath: "sessions").queryOrderedByKey().queryLimited(toLast: 1)
         ref.observeSingleEvent(of: .value) { snapshot in
@@ -62,17 +68,20 @@ struct ImmersiveView: View {
         }
     }
 
+    // Start a timer to periodically fetch the latest heart rate data
     private func startTimer() {
         timer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: true) { _ in
             fetchLatestHeartRate()
         }
     }
 
+    // Stop the timer
     private func stopTimer() {
         timer?.invalidate()
         timer = nil
     }
 
+    // Fetch the latest heart rate data from Firebase
     private func fetchLatestHeartRate() {
         guard let sessionKey = latestSessionKey else { return }
 
@@ -84,11 +93,10 @@ struct ImmersiveView: View {
                let heartRate = dict["heartRate"] as? Double {
                 let hrItem = HeartRate(time: timestamp, rate: heartRate)
                 
-                // Ensure thread-safe updates to hrVals and avoid duplicate entries
                 DispatchQueue.main.async {
                     if self.hrVals.isEmpty || self.hrVals.last?.time != timestamp {
                         self.hrVals.append(hrItem)
-                        self.count += 1  // Increment the count for the x-axis domain
+                        self.count += 1
                         print("Fetched Heart Rate: \(heartRate), Timestamp: \(timestamp)")
                         self.updateHeartRateBasedOnLatest(rate: heartRate)
                     }
@@ -97,6 +105,7 @@ struct ImmersiveView: View {
         }
     }
 
+    // Update the tree growth based on the latest heart rate value
     private func updateHeartRateBasedOnLatest(rate: Double) {
         print("Checking heart rate: \(rate)")
         if rate < Double(growthThreshold) {
@@ -111,7 +120,7 @@ struct ImmersiveView: View {
         } else {
             print("Heart rate \(rate) is above threshold \(growthThreshold) - stopping animation and shrinking tree")
             stopAnimation()
-            if !isShrinking {
+            if (!isShrinking) {
                 isShrinking = true
                 isGrowing = false
                 decrementTreeGrowth()
@@ -119,6 +128,7 @@ struct ImmersiveView: View {
         }
     }
 
+    // Increment tree growth
     private func incrementTreeGrowth() {
         print("Incrementing tree growth")
         if !isGrowing {
@@ -141,6 +151,7 @@ struct ImmersiveView: View {
         }
     }
 
+    // Decrement tree growth
     private func decrementTreeGrowth() {
         print("Decrementing tree growth")
         if !isShrinking {
@@ -152,7 +163,7 @@ struct ImmersiveView: View {
             print("Updating tree scale from \(modelScale) to \(newScale)")
             modelScale = newScale
             updateTreeScale(to: modelScale)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { // Slower interval for shrinking
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 if self.isShrinking {
                     self.decrementTreeGrowth()
                 }
@@ -163,6 +174,7 @@ struct ImmersiveView: View {
         }
     }
 
+    // Update the scale of the tree entity
     private func updateTreeScale(to scale: CGFloat) {
         print("Updating tree scale to \(scale)")
         if let tree = treeEntity {
@@ -171,6 +183,7 @@ struct ImmersiveView: View {
         }
     }
 
+    // Start the tree animation
     private func startAnimation() {
         if let controller = playbackController {
             print("Starting animation")
@@ -180,12 +193,14 @@ struct ImmersiveView: View {
         }
     }
 
+    // Stop the tree animation
     private func stopAnimation() {
         print("Stopping animation")
         playbackController?.pause()
         isGrowing = false
     }
 
+    // Spawn a new tree entity nearby
     private func spawnNewTreeNearby() {
         Task {
             do {
@@ -201,6 +216,7 @@ struct ImmersiveView: View {
     }
 }
 
+// View to display the tree model
 struct TreeView: View {
     @Binding var modelScale: CGFloat
     @Binding var treeEntity: Entity?
@@ -230,6 +246,7 @@ struct TreeView: View {
     }
 }
 
+// Preview provider for the SwiftUI preview
 #Preview {
     ImmersiveView()
         .previewLayout(.sizeThatFits)
